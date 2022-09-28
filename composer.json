@@ -1,7 +1,7 @@
 {
-    "name": "sheadawson/silverstripe-linkable",
+    "name": "silverstripers/silverstripe-linkable",
     "type": "silverstripe-vendormodule",
-    "description": "A couple of handy form fields and objects for managing external and internal links on DataObjects",
+    "description": "A couple of handy form fields and objects for managing external and internal links on DataObjects. A fork from sheadawson/silverstripe-linkable",
     "license": "BSD-3-Clause",
     "keywords": [
         "silverstripe",
