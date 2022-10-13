@@ -32,7 +32,7 @@ class Link extends DataObject
     /**
      * @var string custom CSS classes for template
      */
-    protected $cssClass;
+    protected $cssClass = '';
 
     /**
      * @var array
