@@ -1,25 +1,20 @@
 import $ from 'jquery';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { loadComponent } from 'lib/Injector';
 
-window.ss = window.ss || {};
-
+const LinkFieldPopup = loadComponent('LinkFieldPopup');
 
 $.entwine('ss', ($) => {
   $('input.link').entwine({
-    Loading: null,
-    Dialog: null,
-    URL: null,
-    onmatch() {
-      const self = this;
-      this.setDialog(self.siblings('.linkfield-dialog:first'));
-
+    getURL: function(action) {
       const form = this.parents('form');
       let formUrl = form.attr('action');
       const formUrlParts = formUrl.split('?');
-      let url = `${encodeURI(formUrl)}/field/${this.attr('name')}/LinkFormHTML`;
-      formUrl = formUrlParts[0];
+      let url = `${encodeURI(formUrl)}/field/${this.attr('name')}/${action}`;
 
-      if (self.val().length) {
-        url = `${url}?LinkID=${self.val()}`;
+      if (this.val()) {
+        url = `${url}?LinkID=${this.val()}`;
       } else {
         url += '?LinkID=0';
       }
@@ -28,60 +23,20 @@ $.entwine('ss', ($) => {
         url = `${url}&${formUrlParts[1]}`;
       }
 
-      // add extra query params if provided
-      const extraQuery = self.data('extra-query');
+      const extraQuery = this.data('extra-query');
       if (typeof extraQuery !== 'undefined') {
           url = `${url}${extraQuery}`;
       }
-
-      this.setURL(url);
-
-      // configure the dialog
-      this.getDialog().data('field', this).dialog({
-        autoOpen: false,
-        width: $(window).width() * (80 / 100),
-        height: $(window).height() * (80 / 100),
-        modal: true,
-        title: this.data('dialog-title'),
-        position: { my: 'center', at: 'center', of: window }
-      });
-
-      // submit button loading state while form is submitting
-      this.getDialog().on('click', 'button', function () {
-        $(this).addClass('loading ui-state-disabled');
-      });
-
-      // handle dialog form submission
-      this.getDialog().on('submit', 'form', function () {
-        const options = {};
-        options.success = function (response) {
-          if ($(response).is('.field')) {
-            self.getDialog().empty().dialog('close');
-            self.parents('.field:first').replaceWith(response);
-            form.addClass('changed');
-          } else {
-            self.getDialog().html(response);
-          }
-        };
-
-        $(this).ajaxSubmit(options);
-
-        return false;
-      });
-    },
-
-    onunmatch() {
-      const self = this;
-      $('.linkfield-dialog.ui-dialog-content').filter(function () {
-        return self[0] === $(this).data('field')[0];
-      }).remove();
+      return url;
     },
     showDialog() {
-      const dlg = this.getDialog();
-      dlg.empty().dialog('open').parent().addClass('loading');
-      dlg.load(this.getURL(), () => {
-        dlg.parent().removeClass('loading');
-      });
+      let dialog = $('#link-field-popup__dialog-wrapper');
+      if (!dialog.length) {
+        dialog = $('<div id="link-field-popup__dialog-wrapper" />');
+        $('body').append(dialog);
+      }
+      dialog.open(this);
+      return false;
     }
   });
 
@@ -112,6 +67,57 @@ $.entwine('ss', ($) => {
       });
 
       return false;
+    },
+  });
+
+
+  $('#link-field-popup__dialog-wrapper').entwine({
+    ReactRoot: null,
+    Field: null,
+
+    onunmatch() {
+      this._clearModal();
+    },
+
+    open(field) {
+      this.setField(field);
+      this._renderModal(
+        true
+      );
+    },
+
+    close() {
+      this._renderModal(false);
+    },
+
+    _renderModal(isOpen) {
+      const handleHide = () => this.close();
+      const field = this.getField();
+      let root = this.getReactRoot();
+      if (!root) {
+        root = createRoot(this[0]);
+      }
+      root.render(<LinkFieldPopup
+        isOpen={isOpen}
+        link={isOpen ? field.getURL('LinkFormHTML') : null}
+        title={field.data('title')}
+        onClosed={handleHide}
+        onLinkSave={(response) => {
+          this._onAfterSave(response)
+        }}
+      />);
+      this.setReactRoot(root);
+    },
+    _clearModal() {
+      const root = this.getReactRoot();
+      if (root) {
+        root.unmount();
+        this.setReactRoot(null);
+      }
+    },
+    _onAfterSave(response) {
+      this._clearModal();
+      this.getField().parents('.field:first').replaceWith(response)
     },
   });
 });

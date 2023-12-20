@@ -26,6 +26,15 @@ input.embeddedObjectLoad {
 	}
 }
 
+.linkable-popup {
+    &__body {
+        overflow: auto;
+    }
+
+    &__form-container {
+        padding: 10px 20px;
+    }
+}
 
 .field.embeddedobject .middleColumn{
 	background: #fff;

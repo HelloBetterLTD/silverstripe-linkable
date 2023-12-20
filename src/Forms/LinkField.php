@@ -55,6 +55,7 @@ class LinkField extends TextField
     public function Field($properties = [])
     {
         Requirements::javascript('silverstripers/silverstripe-linkable: client/dist/js/bundle.js');
+        Requirements::css('silverstripers/silverstripe-linkable: client/dist/styles/bundle.css');
 
         return parent::Field();
     }
@@ -73,8 +74,7 @@ class LinkField extends TextField
 
         if (!$this->isFrontend) {
             $action
-                ->addExtraClass('ss-ui-action-constructive')
-                ->setAttribute('data-icon', 'accept');
+                ->addExtraClass('btn-primary font-icon-save');
         }
 
         $link = null;
@@ -86,12 +86,10 @@ class LinkField extends TextField
         $link->setAllowedTypes($this->getAllowedTypes());
 
         /** @var $fields FieldList */
-        $fields = $link->getCMSFields();
-
-        $title = $link ? _t('Linkable.EDITLINK', 'Edit Link') : _t('Linkable.ADDLINK', 'Add Link');
-        $fields->insertBefore(
-            _t('Linkable.TITLE', 'Title'), HeaderField::create('LinkHeader', $title)
-        );
+        $fields = FieldList::create();
+        foreach ($link->getCMSFields()->findOrMakeTab('Root.Main')->FieldList() as $field) {
+            $fields->push($field);
+        }
 
         $actions = FieldList::create($action);
         $form = Form::create($this, 'LinkForm', $fields, $actions);
@@ -101,7 +99,9 @@ class LinkField extends TextField
             $fields->push(HiddenField::create('LinkID', 'LinkID', $link->ID));
         }
 
+        $form->addExtraClass('ss-linkable-form');
         $this->owner->extend('updateLinkForm', $form);
+
 
         return $form;
     }

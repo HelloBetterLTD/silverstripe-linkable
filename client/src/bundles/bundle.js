@@ -1,2 +1,5 @@
-require('../legacy/embeddedobjectfield.js');
-require('../legacy/linkfield.js');
+import 'boot';
+
+
+import '../legacy/embeddedobjectfield';
+import '../legacy/linkfield';
