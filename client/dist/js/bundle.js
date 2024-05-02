@@ -197,8 +197,8 @@ var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "jquery")
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _client = __webpack_require__(/*! react-dom/client */ "react-dom/client");
 var _Injector = __webpack_require__(/*! lib/Injector */ "lib/Injector");
+var _LinkFieldPopup = _interopRequireDefault(__webpack_require__(/*! ../components/LinkFieldPopup */ "./client/src/components/LinkFieldPopup.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-const LinkFieldPopup = (0, _Injector.loadComponent)('LinkFieldPopup');
 _jquery.default.entwine('ss', $ => {
   $('input.link').entwine({
     getURL: function (action) {
@@ -275,7 +275,7 @@ _jquery.default.entwine('ss', $ => {
       if (!root) {
         root = (0, _client.createRoot)(this[0]);
       }
-      root.render(_react.default.createElement(LinkFieldPopup, {
+      root.render(_react.default.createElement(_LinkFieldPopup.default, {
         isOpen: isOpen,
         link: isOpen ? field.getURL('LinkFormHTML') : null,
         title: field.data('title'),

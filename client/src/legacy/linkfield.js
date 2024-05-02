@@ -2,8 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { loadComponent } from 'lib/Injector';
-
-const LinkFieldPopup = loadComponent('LinkFieldPopup');
+import LinkFieldPopup from "../components/LinkFieldPopup";
 
 $.entwine('ss', ($) => {
   $('input.link').entwine({
