@@ -85,6 +85,7 @@ class LinkField extends TextField
         $link = $link ? $link : singleton(Link::class);
         $link->setAllowedTypes($this->getAllowedTypes());
 
+
         /** @var $fields FieldList */
         $fields = FieldList::create();
         foreach ($link->getCMSFields()->findOrMakeTab('Root.Main')->FieldList() as $field) {

@@ -13,7 +13,7 @@
 var _Injector = _interopRequireDefault(__webpack_require__(/*! lib/Injector */ "lib/Injector"));
 var _Config = _interopRequireDefault(__webpack_require__(/*! lib/Config */ "lib/Config"));
 var _registerComponents = _interopRequireDefault(__webpack_require__(/*! boot/registerComponents */ "./client/src/boot/registerComponents.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 window.ss = window.ss || {};
 window.document.addEventListener('DOMContentLoaded', () => {
   (0, _registerComponents.default)();
@@ -35,7 +35,7 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _Injector = _interopRequireDefault(__webpack_require__(/*! lib/Injector */ "lib/Injector"));
 var _LinkFieldPopup = _interopRequireDefault(__webpack_require__(/*! ../components/LinkFieldPopup */ "./client/src/components/LinkFieldPopup.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 var _default = () => {
   _Injector.default.component.registerMany({
     LinkFieldPopup: _LinkFieldPopup.default
@@ -62,9 +62,8 @@ var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _i18n = _interopRequireDefault(__webpack_require__(/*! i18n */ "i18n"));
 var _reactstrap = __webpack_require__(/*! reactstrap */ "reactstrap");
 var _Injector = __webpack_require__(/*! lib/Injector */ "lib/Injector");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 const Loading = (0, _Injector.loadComponent)('Loading');
 const LinkFieldPopup = props => {
   const {
@@ -89,12 +88,20 @@ const LinkFieldPopup = props => {
     if (formContainer.current) {
       const form = formContainer.current.querySelector('form');
       $(form).on('submit', function (e) {
+        console.log(e.originalEvent.submitter);
         e.preventDefault();
+        const $button = $(e.originalEvent.submitter);
         const $this = $(this);
+        const data = $this.serializeArray();
+        data.push({
+          name: $button.attr('name'),
+          value: 1
+        });
+        console.log(data);
         $.ajax({
           url: $this.attr('action'),
           method: 'POST',
-          data: $this.serializeArray(),
+          data: data,
           success: function (response) {
             if ($(response).is('.field')) {
               if (onLinkSave) {
@@ -160,7 +167,7 @@ var _default = exports["default"] = LinkFieldPopup;
 
 
 var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "jquery"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 window.ss = window.ss || {};
 _jquery.default.entwine('ss', $ => {
   $('.embeddedObjectLoad').entwine({
@@ -198,7 +205,7 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _client = __webpack_require__(/*! react-dom/client */ "react-dom/client");
 var _Injector = __webpack_require__(/*! lib/Injector */ "lib/Injector");
 var _LinkFieldPopup = _interopRequireDefault(__webpack_require__(/*! ../components/LinkFieldPopup */ "./client/src/components/LinkFieldPopup.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 _jquery.default.entwine('ss', $ => {
   $('input.link').entwine({
     getURL: function (action) {

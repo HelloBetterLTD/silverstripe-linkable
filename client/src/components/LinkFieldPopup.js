@@ -32,12 +32,21 @@ const LinkFieldPopup = (props) => {
     if (formContainer.current) {
       const form = formContainer.current.querySelector('form');
       $(form).on('submit', function (e) {
+        console.log(e.originalEvent.submitter);
+        // console.log(e.target.originalEvent.submitter);
         e.preventDefault();
+        const $button = $(e.originalEvent.submitter);
         const $this = $(this);
+        const data = $this.serializeArray();
+        data.push({
+          name: $button.attr('name'),
+          value: 1
+        });
+        console.log(data);
         $.ajax({
           url: $this.attr('action'),
           method: 'POST',
-          data: $this.serializeArray(),
+          data: data,
           success: function (response) {
             if ($(response).is('.field')) {
               if (onLinkSave) {
