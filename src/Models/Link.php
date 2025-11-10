@@ -11,8 +11,8 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\Core\Convert;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Core\Validation\ValidationResult;
 
 /**
  * Class Link
@@ -67,17 +67,17 @@ class Link extends DataObject
         'LinkType',
         'LinkURL',
     ];
-    
+
     /**
      * @var array
-     */    
+     */
     private static $searchable_fields = [
         'Title' => 'PartialMatchFilter',
         'URL' => 'PartialMatchFilter',
         'Phone' => 'PartialMatchFilter',
-        'Email' => 'PartialMatchFilter',   
+        'Email' => 'PartialMatchFilter',
     ];
-    
+
     /**
      * A map of templates that are available for rendering
      * Link objects with
@@ -322,7 +322,7 @@ class Link extends DataObject
      *
      * @return DBHTMLText|string
      */
-    public function forTemplate()
+    public function forTemplate() : string
     {
         if ($this->LinkURL) {
             $link = $this->renderWith([
@@ -450,7 +450,7 @@ class Link extends DataObject
      *
      * @return ValidationResult
      */
-    public function validate()
+    public function validate() : ValidationResult
     {
         $valid = true;
         $message = null;
