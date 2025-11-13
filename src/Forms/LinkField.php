@@ -73,7 +73,7 @@ class LinkField extends TextField
 
         if (!$this->isFrontend) {
             $action
-                ->addExtraClass('ss-ui-action-constructive')
+                ->addExtraClass('btn btn-outline-primary font-icon-tick')
                 ->setAttribute('data-icon', 'accept');
         }
 
