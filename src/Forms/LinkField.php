@@ -6,7 +6,6 @@ use Sheadawson\Linkable\Models\Link;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\Requirements;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
@@ -55,6 +54,10 @@ class LinkField extends TextField
     public function Field($properties = [])
     {
         Requirements::javascript('silverstripers/silverstripe-linkable: client/dist/js/bundle.js');
+        $this->setAttribute(
+            'data-dialog-title',
+            $this->getLinkObject() ? _t('Linkable.EDITLINK', 'Edit Link') : _t('Linkable.ADDLINK', 'Add Link')
+        );
 
         return parent::Field();
     }
@@ -87,11 +90,6 @@ class LinkField extends TextField
 
         /** @var $fields FieldList */
         $fields = $link->getCMSFields();
-
-        $title = $link ? _t('Linkable.EDITLINK', 'Edit Link') : _t('Linkable.ADDLINK', 'Add Link');
-        $fields->insertBefore(
-            _t('Linkable.TITLE', 'Title'), HeaderField::create('LinkHeader', $title)
-        );
 
         $actions = FieldList::create($action);
         $form = Form::create($this, 'LinkForm', $fields, $actions);
