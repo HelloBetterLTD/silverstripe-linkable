@@ -136,8 +136,8 @@ _jquery2.default.entwine('ss', function ($) {
       var form = this.parents('form');
       var formUrl = form.attr('action');
       var formUrlParts = formUrl.split('?');
-      var url = encodeURI(formUrl) + '/field/' + this.attr('name') + '/LinkFormHTML';
       formUrl = formUrlParts[0];
+      var url = encodeURI(formUrl) + '/field/' + this.attr('name') + '/LinkFormHTML';
 
       if (self.val().length) {
         url = url + '?LinkID=' + self.val();
@@ -167,9 +167,12 @@ _jquery2.default.entwine('ss', function ($) {
 
       this.getDialog().on('click', 'button', function () {
         $(this).addClass('loading ui-state-disabled');
+        $(this).closest('form').data('submitter', this);
       });
 
-      this.getDialog().on('submit', 'form', function () {
+      this.getDialog().on('submit', 'form', function (event) {
+        event.preventDefault();
+
         var options = {};
         options.success = function (response) {
           if ($(response).is('.field')) {
@@ -181,7 +184,26 @@ _jquery2.default.entwine('ss', function ($) {
           }
         };
 
-        $(this).ajaxSubmit(options);
+        var dialogForm = $(this);
+        if (typeof dialogForm.ajaxSubmit === 'function') {
+          dialogForm.ajaxSubmit(options);
+        } else {
+          var formData = new FormData(this);
+          var submitter = event.originalEvent && event.originalEvent.submitter ? event.originalEvent.submitter : dialogForm.data('submitter');
+
+          if (submitter && submitter.name && !formData.has(submitter.name)) {
+            formData.append(submitter.name, submitter.value || '');
+          }
+
+          $.ajax({
+            url: dialogForm.attr('action'),
+            type: dialogForm.attr('method') || 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: options.success
+          });
+        }
 
         return false;
       });
@@ -213,12 +235,11 @@ _jquery2.default.entwine('ss', function ($) {
       var form = this.parents('form');
       var formUrl = form.attr('action');
       var formUrlParts = formUrl.split('?');
+      formUrl = formUrlParts[0];
       var url = encodeURI(formUrl) + '/field/' + this.siblings('input:first').prop('name') + '/doRemoveLink';
 
-      formUrl = formUrlParts[0];
-
       if (typeof formUrlParts[1] !== 'undefined') {
-        url = url + '&' + formUrlParts[1];
+        url = url + '?' + formUrlParts[1];
       }
       var holder = this.parents('.field:first');
       this.parents('.middleColumn:first').html("<img src='framework/images/network-save.gif' />");

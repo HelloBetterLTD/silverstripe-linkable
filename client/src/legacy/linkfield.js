@@ -15,8 +15,8 @@ $.entwine('ss', ($) => {
       const form = this.parents('form');
       let formUrl = form.attr('action');
       const formUrlParts = formUrl.split('?');
-      let url = `${encodeURI(formUrl)}/field/${this.attr('name')}/LinkFormHTML`;
       formUrl = formUrlParts[0];
+      let url = `${encodeURI(formUrl)}/field/${this.attr('name')}/LinkFormHTML`;
 
       if (self.val().length) {
         url = `${url}?LinkID=${self.val()}`;
@@ -49,10 +49,13 @@ $.entwine('ss', ($) => {
       // submit button loading state while form is submitting
       this.getDialog().on('click', 'button', function () {
         $(this).addClass('loading ui-state-disabled');
+        $(this).closest('form').data('submitter', this);
       });
 
       // handle dialog form submission
-      this.getDialog().on('submit', 'form', function () {
+      this.getDialog().on('submit', 'form', function (event) {
+        event.preventDefault();
+
         const options = {};
         options.success = function (response) {
           if ($(response).is('.field')) {
@@ -64,7 +67,28 @@ $.entwine('ss', ($) => {
           }
         };
 
-        $(this).ajaxSubmit(options);
+        const dialogForm = $(this);
+        if (typeof dialogForm.ajaxSubmit === 'function') {
+          dialogForm.ajaxSubmit(options);
+        } else {
+          const formData = new FormData(this);
+          const submitter = event.originalEvent && event.originalEvent.submitter
+            ? event.originalEvent.submitter
+            : dialogForm.data('submitter');
+
+          if (submitter && submitter.name && !formData.has(submitter.name)) {
+            formData.append(submitter.name, submitter.value || '');
+          }
+
+          $.ajax({
+            url: dialogForm.attr('action'),
+            type: dialogForm.attr('method') || 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: options.success
+          });
+        }
 
         return false;
       });
@@ -97,12 +121,11 @@ $.entwine('ss', ($) => {
       const form = this.parents('form');
       let formUrl = form.attr('action');
       const formUrlParts = formUrl.split('?');
+      formUrl = formUrlParts[0];
       let url = `${encodeURI(formUrl)}/field/${this.siblings('input:first').prop('name')}/doRemoveLink`;
 
-      formUrl = formUrlParts[0];
-
       if (typeof formUrlParts[1] !== 'undefined') {
-        url = `${url}&${formUrlParts[1]}`;
+        url = `${url}?${formUrlParts[1]}`;
       }
       const holder = this.parents('.field:first');
       this.parents('.middleColumn:first').html("<img src='framework/images/network-save.gif' />");
