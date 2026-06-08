@@ -203,6 +203,7 @@ class LinkField extends TextField
     public function setAllowedTypes($types = [])
     {
         $this->allowed_types = $types;
+
         return $this;
     }
 
